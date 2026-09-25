@@ -87,7 +87,20 @@ function initDisplayView(iban, name) {
         });
     });
 
-    // 4. Generate TR Karekod (EMV Format) and render QR
+    // 4. Setup Name Copy
+    const copyNameBtn = document.getElementById('copyNameBtn');
+    const nameFeedback = document.getElementById('nameCopyFeedback');
+    
+    copyNameBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(name).then(() => {
+            nameFeedback.classList.add('show');
+            setTimeout(() => {
+                nameFeedback.classList.remove('show');
+            }, 2000);
+        });
+    });
+
+    // 5. Generate TR Karekod (EMV Format) and render QR
     const trKarekodPayload = generateTRKarekodEMV(cleanIban, name);
     
     const qrContainer = document.getElementById('qrcode');
@@ -99,7 +112,7 @@ function initDisplayView(iban, name) {
         height: 200,
         colorDark : "#0f172a",
         colorLight : "#ffffff",
-        correctLevel : QRCode.CorrectLevel.M
+        correctLevel : QRCode.CorrectLevel.L // Use L (Low) to fix length overflow issue for long strings
     });
 }
 
