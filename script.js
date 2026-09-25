@@ -153,9 +153,9 @@ function generateTRKarekodEMV(iban, name) {
     payload += buildTLV("75", "10"); // Version 1.0
     payload += buildTLV("01", "11"); // Static QR
     
-    // Tag 02 - Bank Code from IBAN
-    let bankCode = cleanIban.substring(4, 9).replace(/^0+/, '');
-    if (!bankCode) bankCode = "0000";
+    // Tag 02 - Bank Code from IBAN (Karekod Üretici Kodu - n04 Formatı Zorunlu)
+    let rawBankCode = cleanIban.substring(4, 9); // e.g. "00209"
+    let bankCode = String(parseInt(rawBankCode, 10) || 0).padStart(4, '0');
     payload += buildTLV("02", bankCode);
     
     const now = new Date();
