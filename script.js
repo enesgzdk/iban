@@ -103,16 +103,15 @@ function initDisplayView(iban, name) {
     // 5. Generate TR Karekod (EMV Format) and render QR
     const trKarekodPayload = generateTRKarekodEMV(cleanIban, name);
     
-    const qrContainer = document.getElementById('qrcode');
-    qrContainer.innerHTML = ''; // clear if any
+    const qrCanvas = document.getElementById('qrcode');
     
-    new QRCode(qrContainer, {
-        text: trKarekodPayload,
-        width: 200,
-        height: 200,
-        colorDark : "#0f172a",
-        colorLight : "#ffffff",
-        correctLevel : QRCode.CorrectLevel.L // Use L (Low) to fix length overflow issue for long strings
+    new QRious({
+        element: qrCanvas,
+        value: trKarekodPayload,
+        size: 200,
+        level: 'L', // Low error correction to maximize data capacity
+        foreground: '#0f172a',
+        background: '#ffffff'
     });
 }
 
