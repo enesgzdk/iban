@@ -22,9 +22,12 @@ body {
     min-height: 100vh;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
+    padding: 20px;
+    box-sizing: border-box;
     position: relative;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 /* Background Animated Blobs */
@@ -76,12 +79,12 @@ body {
     -webkit-backdrop-filter: blur(16px);
     border: 1px solid var(--glass-border);
     border-radius: 24px;
-    padding: 40px;
+    padding: 32px;
     width: 100%;
     max-width: 480px;
     z-index: 1;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-    margin: 20px;
+    margin: auto;
 }
 
 /* Common View Styles */
@@ -315,7 +318,39 @@ body {
 /* Responsive */
 @media (max-width: 480px) {
     .glass-container {
-        padding: 24px;
+        padding: 20px;
         border-radius: 20px;
+    }
+    
+    .avatar {
+        width: 60px;
+        height: 60px;
+        font-size: 22px;
+    }
+
+    #displayName {
+        font-size: 20px;
+    }
+
+    .view {
+        gap: 16px;
+    }
+
+    .iban-card {
+        padding: 16px;
+    }
+    
+    .copy-box span, .copy-box input {
+        font-size: 13px;
+        padding: 12px;
+    }
+
+    .qr-section {
+        gap: 10px;
+    }
+    
+    .qr-wrapper canvas {
+        width: 150px !important;
+        height: 150px !important;
     }
 }
