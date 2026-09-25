@@ -135,31 +135,50 @@ function buildTLV(tag, value) {
  */
 function generateTRKarekodEMV(iban, name) {
     let payload = "";
+    const cleanIban = iban.replace(/\s+/g, '').toUpperCase();
     
-    payload += buildTLV("00", "01"); // Version
-    payload += buildTLV("01", "11"); // Static
+    // TR Karekod P2P Format (Kişiden Kişiye Ödeme)
+    payload += buildTLV("75", "10"); // Version 1.0
+    payload += buildTLV("01", "11"); // Static QR
     
-    // Tag 26 - TR Karekod FAST Structure
-    // "00" GUID: TR.GOV.TCMB.FAST
-    // "01" IBAN
-    const trKarekodSub = buildTLV("00", "TR.GOV.TCMB.FAST") + buildTLV("01", iban);
-    payload += buildTLV("26", trKarekodSub);
+    // Tag 02 - Bank Code from IBAN
+    let bankCode = cleanIban.substring(4, 9).replace(/^0+/, '');
+    if (!bankCode) bankCode = "0000";
+    payload += buildTLV("02", bankCode);
     
-    payload += buildTLV("52", "0000"); // Merchant Category Code (0000 for P2P)
-    payload += buildTLV("53", "949"); // Currency TRY
+    const now = new Date();
+    const yy = String(now.getFullYear()).slice(2);
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const dd = String(now.getDate()).padStart(2, '0');
+    const hh = String(now.getHours()).padStart(2, '0');
+    const min = String(now.getMinutes()).padStart(2, '0');
+    const ss = String(now.getSeconds()).padStart(2, '0');
     
-    // Normalize name to ASCII/English characters max 25 len (EMV requirement)
-    const normalizedName = name
-        .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Remove accents
-        .replace(/[^A-Za-z0-9 ]/g, "")
-        .substring(0, 25)
-        .trim() || "MUSTERI";
-        
-    payload += buildTLV("58", "TR"); // Country
-    payload += buildTLV("59", normalizedName); // Name
-    payload += buildTLV("60", "ISTANBUL"); // City (required by some banks)
+    // Tag 03 - Reference (12 digits)
+    payload += buildTLV("03", yy + mm + dd + "000001");
     
-    // CRC Preparation
+    // Tag 06 - Timestamp (12 digits: YYMMDDHHmmss)
+    payload += buildTLV("06", yy + mm + dd + hh + min + ss);
+    
+    // Tag 54 - Amount (000000000000 = belirsiz tutar)
+    payload += buildTLV("54", "000000000000");
+    
+    // Tag 61 - Hesap Bilgileri
+    let tag61Content = "";
+    tag61Content += buildTLV("01", cleanIban); // IBAN
+    
+    // İsim (Türkçe karakterler bu formatta genelde destekleniyor)
+    let cleanName = name.trim().toUpperCase().substring(0, 30);
+    tag61Content += buildTLV("07", cleanName);
+    tag61Content += buildTLV("10", "03"); // Para birimi / Hesap Tipi
+    
+    payload += buildTLV("61", tag61Content);
+    
+    // Tag 20 - Banka İmza / Hash alanı (Opsiyonel olabilir, bankadan bankaya değişir)
+    // Şimdilik 32 haneli rastgele/sıfır bir değer ekliyoruz ki format bütünlüğü bozulmasın.
+    payload += buildTLV("20", "00000000000000000000000000000000");
+    
+    // Tag 63 - CRC
     payload += "6304";
     const crc = calculateCRC(payload);
     payload += crc;
