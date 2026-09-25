@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NFC IBAN Paylaşım</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="background-elements">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <div class="glass-container" id="mainContainer">
+        <!-- LINK OLUŞTURUCU FORMU (ADMIN EKRANI) -->
+        <div id="generatorView" class="view hidden">
+            <div class="header">
+                <h1>Link Oluşturucu</h1>
+                <p>NFC kartlarına yazılacak linki üretin</p>
+            </div>
+            
+            <form id="generateForm">
+                <div class="input-group">
+                    <label for="nameInput">İsim Soyisim</label>
+                    <input type="text" id="nameInput" placeholder="Örn: Enes Furkan Gözüdik" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="ibanInput">IBAN Numarası</label>
+                    <input type="text" id="ibanInput" placeholder="TR..." required>
+                </div>
+                
+                <button type="submit" class="btn-primary">Link Oluştur</button>
+            </form>
+
+            <div id="resultBox" class="hidden">
+                <p class="result-label">Oluşturulan Link (NFC'ye Yazınız):</p>
+                <div class="copy-box">
+                    <input type="text" id="generatedLink" readonly>
+                    <button id="copyLinkBtn" class="btn-icon" title="Kopyala">
+                        <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    </button>
+                </div>
+                <p class="copy-feedback" id="linkCopyFeedback">Kopyalandı!</p>
+            </div>
+        </div>
+
+        <!-- MÜŞTERİ EKRANI (NFC OKUTULDUĞUNDA) -->
+        <div id="displayView" class="view hidden">
+            <div class="profile-section">
+                <div class="avatar" id="avatarText">EF</div>
+                <h2 id="displayName">İsim Yükleniyor...</h2>
+                <p class="subtitle">Banka Hesabı / IBAN Bilgisi</p>
+            </div>
+
+            <div class="iban-card">
+                <p class="iban-label">IBAN Numarası</p>
+                <div class="copy-box">
+                    <span id="displayIban">TR00...</span>
+                    <button id="copyIbanBtn" class="btn-icon" title="IBAN Kopyala">
+                         <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    </button>
+                </div>
+                <p class="copy-feedback" id="ibanCopyFeedback">IBAN Kopyalandı!</p>
+            </div>
+
+            <div class="qr-section">
+                <p>Banka uygulamanızdan karekodu okutabilirsiniz.</p>
+                <div class="qr-wrapper">
+                    <div id="qrcode"></div>
+                </div>
+                <p class="qr-note">TR Karekod (FAST)</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- qrcode.js library from cdn -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
